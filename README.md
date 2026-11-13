@@ -1,13 +1,13 @@
-Modul6_ArsitekturAplikasiAndroid
+Modul8_Kotlin-Coroutines-Flow
 
 Nama: Charisa Salsabila Larasati
 
 NIM: 24515020111022
 
-Deskripsi: Tugas praktikum Pengembangan Aplikasi Perangkat Bergerak (PAPB) mengenai Arsitektur Aplikasi Android (UI Layer, ViewModel, Repository, & Data Layer)
+Deskripsi: Tugas praktikum Pengembangan Aplikasi Perangkat Bergerak (PAPB) mengenai Kotlin Coroutines, Asynchronous Flow, dan Implementasi Fitur Refresh pada Arsitektur Android MVVM
 
-Proyek ini merupakan pengembangan lanjutan dari NavigationLab yang menerapkan prinsip Clean Architecture dan Separation of Concerns pada pengembangan aplikasi Android berbasis Jetpack Compose. Fokus utamanya adalah memisahkan tanggung jawab secara tegas, di mana komponen antarmuka seperti HomeScreen dan DetailScreen hanya bertugas merender state dan menangani interaksi pengguna, sementara logika pengelolaan data didelegasikan sepenuhnya ke ViewModel melalui kontrak antarmuka Repository yang mengabstraksi sumber data lokal in-memory (StudentLocalDataSource).
+Proyek ini merupakan pengembangan lanjutan dari NavigationLab yang menerapkan pemanfaatan Kotlin Coroutines dan Reactive StateFlow untuk menangani operasi asinkron pada aplikasi Android berbasis Jetpack Compose. Fokus utamanya adalah memastikan bahwa seluruh proses pemanggilan data berbasis jaringan (Retrofit REST API) dieksekusi secara asinkron di latar belakang tanpa memblokir thread utama, serta mempertahankan prinsip Clean Architecture di mana business logic dan penanganan state dikelola secara terpusat di dalam ViewModel.
 
-Dalam pengembangannya, aplikasi ini dibangun secara bertahap mulai dari penataan struktur package berlapis, pembuatan model data Student, perancangan repository dengan antarmuka yang bersih, hingga penyusunan UI state dan ViewModel tingkat layar yang aman terhadap perubahan konfigurasi perangkat seperti rotasi layar. Selain itu, integrasi navigasi multi-layar dari Home ke Detail menggunakan argumen studentId dipastikan berjalan mulus bersamaan dengan fungsionalitas tombol Back, Profile, dan About.
+Dalam pengembangannya, fungsionalitas utama difokuskan pada implementasi fitur Refresh manual yang dipicu dari komponen antarmuka HomeScreen melalui tombol khusus. Ketika tombol ditekan, event tersebut meneruskan instruksi ke HomeViewModel untuk menjalankan fungsi asinkron menggunakan viewModelScope.launch. Sistem secara cerdas mendeteksi kondisi query aktif baik saat kolom pencarian kosong (memuat ulang daftar awal mahasiswa secara keseluruhan) maupun saat berisi teks tertentu (mengulang pencarian dengan kata kunci aktif).
 
-Sebagai bagian dari pengembangan fitur utama, daftar mahasiswa pada halaman Home dirancang secara interaktif menggunakan komponen LazyColumn dengan penambahan data baru serta implementasi penanganan state error khusus untuk skenario ketika data yang dicari tidak ditemukan.
+Selain itu, manajemen state reaktif diperkuat melalui pembaruan status isLoading dan errorMessage secara tepat untuk memberikan umpan balik visual yang responsif kepada pengguna. Seluruh implementasi dipastikan mematuhi standar keamanan arsitektur modern tanpa melibatkan GlobalScope ataupun membuat coroutine scope mandiri di lapisan UI, sehingga stabilitas navigasi antar layar dan alur kembali (back stack) tetap berjalan mulus dan andal.
