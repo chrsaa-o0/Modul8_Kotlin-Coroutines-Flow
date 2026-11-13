@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Modul5Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    NavigationLabApp()
+                    NavigationAppLab()
                 }
             }
         }

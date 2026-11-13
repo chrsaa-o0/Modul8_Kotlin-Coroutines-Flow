@@ -9,18 +9,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.modul5.ui.home.HomeUiState
 
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     onStudentClick: (Int) -> Unit,
     onOpenProfile: () -> Unit,
     onOpenAbout: () -> Unit,
     onRetry: () -> Unit,
-    onSearch: (String) -> Unit
+    onRefresh: () -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,39 +31,46 @@ fun HomeScreen(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(onClick = onOpenProfile) {
-                Text("Profile")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = onRefresh,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = "⟳",
+                        fontSize = 22.sp
+                    )
+                }
+                Button(onClick = onOpenProfile) {
+                    Text("Profile")
+                }
             }
             Button(onClick = onOpenAbout) {
                 Text("About")
             }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Daftar Mahasiswa",
             style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
+
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
+            label = { Text("Cari profil") },
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("Cari Mahasiswa") },
-                modifier = Modifier.weight(1f),
-                singleLine = true
-            )
-            Button(
-                onClick = { onSearch(searchQuery) }
-            ) {
-                Text("Cari")
-            }
-        }
+            singleLine = true
+        )
+
         Spacer(modifier = Modifier.height(12.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             when {

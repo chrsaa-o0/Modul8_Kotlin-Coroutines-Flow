@@ -2,9 +2,11 @@ package com.example.modul5
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,10 +23,11 @@ import com.example.modul5.ui.detail.DetailViewModel
 import com.example.modul5.ui.home.HomeViewModel
 
 @Composable
-fun NavigationLabApp() {
+fun NavigationAppLab() {
     val navController = rememberNavController()
     val remoteDataSource = remember { StudentRemoteDataSource(RetrofitClient.apiService) }
     val repository = remember { DefaultStudentRepository(remoteDataSource) }
+
     NavHost(
         navController = navController,
         startDestination = Routes.HOME
@@ -38,8 +41,14 @@ fun NavigationLabApp() {
                     }
                 }
             )
+            val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+            val searchQuery by homeViewModel.searchQuery.collectAsStateWithLifecycle()
             HomeScreen(
-                uiState = homeViewModel.uiState,
+                uiState = homeUiState,
+                searchQuery = searchQuery,
+                onSearchQueryChange = { query ->
+                    homeViewModel.onSearchQueryChange(query)
+                },
                 onStudentClick = { id ->
                     navController.navigate(Routes.detail(id))
                 },
@@ -50,10 +59,10 @@ fun NavigationLabApp() {
                     navController.navigate(Routes.ABOUT)
                 },
                 onRetry = {
-                    homeViewModel.loadStudents()
+                    homeViewModel.retry()
                 },
-                onSearch = { query ->
-                    homeViewModel.searchStudents(query)
+                onRefresh = {
+                    homeViewModel.refresh()
                 }
             )
         }
@@ -72,8 +81,11 @@ fun NavigationLabApp() {
             LaunchedEffect(studentId) {
                 viewModel.loadStudent(studentId)
             }
+
+            val detailUiState by viewModel.uiState.collectAsStateWithLifecycle()
+
             DetailScreen(
-                uiState = viewModel.uiState,
+                uiState = detailUiState,
                 onBack = { navController.popBackStack() }
             )
         }
